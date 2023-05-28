@@ -47,6 +47,17 @@ def update_quiz_status():
             quiz_status = 'active'
         quizzes_collection.update_one({'_id': quiz['_id']}, {'$set': {'status': quiz_status, 'start_date': quiz['start_date'], 'end_date': quiz['end_date']}})
 
+def update_qz_st():
+    now = datetime.now()
+    quizzes = quizzes_collection.find()
+    for quiz in quizzes:
+        if now < quiz['start_date']:
+            quiz_status = 'inactive'
+        elif now > quiz['end_date']:
+            quiz_status = 'finished'
+        elif now < quiz['end_date'] and now > quiz['start_date']:
+            quiz_status = 'active'
+        return quiz_status
 
 @app.route('/', methods=['GET','POST'])
 def home_page():
@@ -80,16 +91,18 @@ def create_quiz():
 
         start_datetime = datetime.strptime(start_date + ' ' + start_time, '%Y-%m-%d %H:%M')
         end_datetime = datetime.strptime(end_date + ' ' + end_time, '%Y-%m-%d %H:%M')
+        
+        stat = update_qz_st()
+        
         quiz = {
             'quiz_name': quiz_name,
             'author': author,
             'start_date': start_datetime,
             'end_date': end_datetime,
             'questions': questions,
-            'status': 'inactive'
+            'status': stat
         }
         quizzes_collection.insert_one(quiz)
-        update_quiz_status()
         
         return redirect(url_for('get_all_quizzes'))
     else:
