@@ -82,7 +82,7 @@ def create_quiz():
         end_datetime = datetime.strptime(end_date + ' ' + end_time, '%Y-%m-%d %H:%M')
         quiz = {
             'quiz_name': quiz_name,
-            'Author': author,
+            'author': author,
             'start_date': start_datetime,
             'end_date': end_datetime,
             'questions': questions,
