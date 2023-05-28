@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Quizzes</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/quizzes.css') }}">
+
+</head>
+<body>
+
+    {% include 'nav.html' %}
+    <div class="v-rule"></div>
+    <h1>Active Quizzes</h1>
+    {% set active_quizzes = activeQuizzes|selectattr('status', 'equalto', 'active')|list %}
+    {% if active_quizzes %}
+        {% for quiz in active_quizzes %}
+            <div class="quiz-container">
+                <h2>{{ quiz.quiz_name }}</h2>
+                <p><strong>Author:</strong> {{ quiz.author }}</p>
+                <p><strong>Start Time:</strong> {{ quiz.start_date.strftime("%Y-%m-%d %H:%M") }}</p>
+                <p><strong>End Time:</strong> {{ quiz.end_date.strftime("%Y-%m-%d %H:%M") }}</p>
+                <form action="/start_quiz/{{ quiz._id }}" method="GET">
+                    <input type="submit" value="Start Quiz">
+                </form>
+            </div>
+            <hr>
+        {% endfor %}
+    {% else %}
+        <p class="no-quizzes">No Active Quizzes</p>
+    {% endif %}
+    <hr>
+
+    <h1>Inactive Quizzes</h1>
+    {% set inactive_quizzes = inactiveQuizzes|selectattr('status', 'equalto', 'inactive')|list %}
+    {% if inactive_quizzes %}
+        {% for quiz in inactive_quizzes %}
+            <div class="quiz-container">
+                <h2>{{ quiz.quiz_name }}</h2>
+                <p><strong>Author:</strong> {{ quiz.author }}</p>
+                <p><strong>Status:</strong> {{ quiz.status }}</p>
+                <p><strong>Start Time:</strong> {{ quiz.start_date.strftime("%Y-%m-%d %H:%M") }}</p>
+                <p><strong>End Time:</strong> {{ quiz.end_date.strftime("%Y-%m-%d %H:%M") }}</p>
+            </div>
+            <hr>
+        {% endfor %}
+    {% else %}
+        <p class="no-quizzes">No Inactive Quizzes</p>
+    {% endif %}
+    <hr>
+
+    <h1>Finished Quizzes</h1>
+    {% set finished_quizzes = finishedQuizzes|selectattr('status', 'equalto', 'finished')|list %}
+    {% if finished_quizzes %}
+        {% for quiz in finished_quizzes %}
+            <div class="quiz-container">
+                <h2>{{ quiz.quiz_name }}</h2>
+                <p><strong>Author:</strong> {{ quiz.author }}</p>
+                <p><strong>Status:</strong> {{ quiz.status }}</p>
+                <p><strong>Start Time:</strong> {{ quiz.start_date.strftime("%Y-%m-%d %H:%M") }}</p>
+                <p><strong>End Time:</strong> {{ quiz.end_date.strftime("%Y-%m-%d %H:%M") }}</p>
+            </div>
+            <hr>
+        {% endfor %}
+    {% else %}
+        <p class="no-quizzes">No Finished Quizzes</p>
+    {% endif %}
+    <hr>
+</body>
+</html>

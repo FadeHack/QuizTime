@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/result.css') }}">
+</head>
+<body>
+    <h1>All Results</h1>
+    {% include 'nav.html' %}
+    {% if results is defined and results %}
+        {% for result in results %}
+            <div class="result-container">
+                <h2>Quiz ID: {{ result.quiz_id }}</h2>
+                <h4>Quiz Name: {{ result.quiz_name }}</h4>
+                <p><strong>Score:</strong> {{ result.score }}</p>
+                <p><strong>Timestamp:</strong> {{ result.timestamp }}</p>
+            </div>
+            <hr>
+        {% endfor %}
+    {% else %}
+        <p class="no-results">No Results</p>
+    {% endif %}
+</body>
+</html>

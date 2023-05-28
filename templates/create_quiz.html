@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Quiz</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/create_quiz.css') }}">
+
+</head>
+<body>
+    {% include 'nav.html' %}
+    <h1>Create Quiz</h1>
+    <form action="/create_quiz" method="POST">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="quizName">Quiz Name:</label>
+                <input type="text" id="quizName" name="quizName" required>
+            </div>
+            <div class="form-group">
+                <label for="topic">Author:</label>
+                <input type="text" id="author" name="author" required>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="startDate">Start Date:</label>
+                <input type="date" id="startDate" name="startDate" required>
+            </div>
+            <div class="form-group">
+                <label for="startTime">Start Time:</label>
+                <input type="time" id="startTime" name="startTime" required>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="endDate">End Date:</label>
+                <input type="date" id="endDate" name="endDate" required>
+            </div>
+            <div class="form-group">
+                <label for="endTime">End Time:</label>
+                <input type="time" id="endTime" name="endTime" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="num_questions">Number of Questions:</label>
+            <input type="text" id="num_questions" name="num_questions" min="1" maxlength="2" pattern="[0-9]*" placeholder="Add Up to 1-99 Questions" required>
+        </div>
+        <div id="questionInputs"></div>
+        <input type="submit" value="Create Quiz">
+    </form>
+
+    <script>
+        const numQuestionsInput = document.getElementById("num_questions");
+        const questionInputsContainer = document.getElementById("questionInputs");
+
+        numQuestionsInput.addEventListener("input", function () {
+            const numQuestions = parseInt(numQuestionsInput.value);
+            questionInputsContainer.innerHTML = "";
+
+            for (let i = 1; i <= numQuestions; i++) {
+                const questionDiv = document.createElement("div");
+                questionDiv.innerHTML = `
+                    <h3>Question ${i}</h3>
+                    <div class="question-container">
+                        <input type="text" id="question${i}" name="question${i}" class="question-input" placeholder="Enter your question here" required>
+                    </div>
+                    <div class="options-container">
+                        ${generateOptionInputs(i)}
+                    </div>
+                    <label for="question${i}_correct_option">Correct Option:</label>
+                    <input type="number" id="question${i}_correct_option" name="question${i}_correct_option" class="correct-option" placeholder="Enter the correct option" min="1" max="4" required>
+                `;
+
+                questionInputsContainer.appendChild(questionDiv);
+            }
+        });
+
+        function generateOptionInputs(questionNumber) {
+            let optionsHTML = "";
+            for (let j = 1; j <= 4; j++) {
+                optionsHTML += `
+                    <input type="text" class="option-input" id="question${questionNumber}_option${j}" name="question${questionNumber}_option${j}" placeholder="Option ${j}" required>
+                `;
+            }
+            return optionsHTML;
+        }
+    </script>
+</body>
+</html>

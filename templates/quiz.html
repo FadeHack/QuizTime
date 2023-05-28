@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/quiz.css') }}">
+</head>
+<body>
+    <h1>Quiz</h1>
+    <h2>TOPIC : {{ quiz.quiz_name }}</h2>
+    <h2 id="timer_head">Timer: <span id="timer"></span></h2>
+    {% if questions %}
+        <form id="quiz-form" action="/submit_quiz/{{ quiz['_id'] }}" method="POST">
+
+            {% for question in questions %}
+                <div id="question_{{ question.i }}" class="question-container" {% if question.i != 0 %}style="display: none;"{% endif %}>
+                    <h3>Question: {{ question.question }}</h3>
+                    {% for j in range(4) %}
+                        <input type="radio" name="response_{{ question.i }}" value="{{ j+1 }}" required> {{ question.options[j] }}<br>
+                        <span class="checkmark" style="display: none;"></span>
+                    {% endfor %}
+                    <br>
+                </div>
+            {% endfor %}
+            
+            <div id="navigation-buttons">
+                <button type="button" name="previous" onclick="handlePrevious()">Previous</button>
+                <button type="button" name="next" onclick="handleNext()">Next</button>
+                <input type="submit" name="finish" value="Finish" style="display: none;">
+            </div>
+        </form>
+    {% else %}
+        <p>No questions available.</p>
+    {% endif %}
+
+    <script>
+        var currentQuestionIndex = 0;
+        var questions = JSON.parse('{{ questions | tojson | safe }}');
+        var startTime = new Date('{{ quiz.start_date.strftime("%Y-%m-%d %H:%M:%S") }}');
+        var endTime = new Date('{{ quiz.end_date.strftime("%Y-%m-%d %H:%M:%S") }}');
+
+        function updateTimer() {
+            var now = new Date();
+            var remainingTimeMs = endTime - now;
+
+            if (remainingTimeMs <= 0) {
+                document.getElementById('timer').innerHTML = "Time's Up!";
+                document.getElementById('navigation-buttons').style.display = 'none';
+                document.getElementById('quiz-form').submit();
+            } else {
+                var days = Math.floor(remainingTimeMs / (1000 * 60 * 60 * 24));
+                var hours = Math.floor((remainingTimeMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var minutes = Math.floor((remainingTimeMs % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = Math.floor((remainingTimeMs % (1000 * 60)) / 1000);
+
+                var timerText = "";
+                if (days > 0) {
+                    timerText += days + "d ";
+                }
+                if (hours > 0) {
+                    timerText += hours + "h ";
+                }
+                timerText += minutes + "m " + seconds + "s";
+
+                document.getElementById('timer').innerHTML = timerText;
+                setTimeout(updateTimer, 1000);
+            }
+        }
+
+        function showQuestion(index) {
+            var questionContainers = document.getElementsByClassName('question-container');
+            for (var i = 0; i < questionContainers.length; i++) {
+                if (i === index) {
+                    questionContainers[i].style.display = 'block';
+                } else {
+                    questionContainers[i].style.display = 'none';
+                }
+            }
+
+            var navigationButtons = document.getElementById('navigation-buttons');
+            if (index === 0) {
+                navigationButtons.querySelector('button[name="previous"]').style.display = 'none';
+            } else {
+                navigationButtons.querySelector('button[name="previous"]').style.display = 'block';
+            }
+
+            if (index === questionContainers.length - 1) {
+                navigationButtons.querySelector('button[name="next"]').style.display = 'none';
+                navigationButtons.querySelector('input[name="finish"]').style.display = 'block';
+            } else {
+                navigationButtons.querySelector('button[name="next"]').style.display = 'block';
+                navigationButtons.querySelector('input[name="finish"]').style.display = 'none';
+            }
+        }
+
+        function handleNext() {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                showQuestion(currentQuestionIndex);
+            }
+        }
+
+        function handlePrevious() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                showQuestion(currentQuestionIndex);
+            }
+        }
+
+        window.onload = function() {
+            showQuestion(currentQuestionIndex);
+            updateTimer();
+        };
+
+        function handleRadioChange(event) {
+            var radio = event.target;
+            var questionId = radio.name.split('_')[1];
+            var question = questions[questionId];
+            question.correct_option = radio.value;
+        }
+
+        var form = document.getElementById('quiz-form');
+        var radios = form.querySelectorAll('input[type="radio"]');
+        for (var i = 0; i < radios.length; i++) {
+            radios[i].addEventListener('change', handleRadioChange);
+        }
+    </script>
+</body>
+</html>
