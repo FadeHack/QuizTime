@@ -89,6 +89,8 @@ def create_quiz():
             'status': 'inactive'
         }
         quizzes_collection.insert_one(quiz)
+        update_quiz_status()
+        
         return redirect(url_for('get_all_quizzes'))
     else:
         return render_template('create_quiz.html', num_questions=num_questions)
