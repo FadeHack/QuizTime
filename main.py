@@ -6,7 +6,7 @@ from datetime import datetime
 from pymongo.server_api import ServerApi
 from apscheduler.schedulers.background import BackgroundScheduler
 import pytz
-
+import json
 
 app = Flask(__name__)
 uri = 'mongodb+srv://Temp_User:9BH1EM6p6LWStCxt@mongodatabase.ytbk03l.mongodb.net/?retryWrites=true&w=majority'
@@ -81,6 +81,15 @@ def home_page():
     if request.method == 'POST':
         return redirect(url_for('create_quiz'))
     return render_template('index.html')
+
+
+
+@app.route('/quiz_status/<quiz_id>', methods=['GET'])
+def get_quiz_status(quiz_id):
+    quiz = quizzes_collection.find_one({'_id': ObjectId(quiz_id)})
+    quiz_status = quiz['status']
+    response = {'status': quiz_status}
+    return json.dumps(response)
 
 
 # Endpoint to create a new quiz
