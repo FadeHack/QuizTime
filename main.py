@@ -28,7 +28,7 @@ quizzes_collection = db['quizzes']
 results_collection = db['results']
 
 # Rate limiting configuration
-limiter = Limiter(app, default_limits=["1000 per minute"])
+limiter = Limiter(app, default_limits=["10 per minute"])
 
 def convert_to_ist(datetime_obj):
     ist_timezone = pytz.timezone('Asia/Kolkata')  # IST timezone

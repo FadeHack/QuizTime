@@ -38,8 +38,8 @@
     <script>
         var currentQuestionIndex = 0;
         var questions = JSON.parse('{{ questions | tojson | safe }}');
-        var startTime = new Date('{{ quiz.start_date }}');
-        var endTime = new Date('{{ quiz.end_date }}');
+        var startTime = new Date('{{ quiz.start_date.strftime("%Y-%m-%d %H:%M:%S") }}');
+        var endTime = new Date('{{ quiz.end_date.strftime("%Y-%m-%d %H:%M:%S") }}');
 
         function updateTimer() {
             var now = new Date();
