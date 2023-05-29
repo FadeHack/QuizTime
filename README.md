@@ -14,7 +14,6 @@ QuizTime is a web-based quiz application built with Flask. It allows users to cr
 
 ### Quizzes Page
 ![Quizzes Page](screenshots/quizzes.png)
-![Quizzes Page](screenshots/quizzes2.png)
 
 ### Quiz Page
 ![Quiz Page](screenshots/quiz.png)
