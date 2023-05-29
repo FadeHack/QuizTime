@@ -178,6 +178,9 @@ def get_all_quizzes():
     finished_quizzes = []
 
     for quiz in quizzes:
+        quiz['start_date'] = convert_to_ist(quiz['start_date'])
+        quiz['end_date'] = convert_to_ist(quiz['end_date'])
+
         if quiz['status'] == 'active':
             active_quizzes.append(quiz)
         elif quiz['status'] == 'inactive':
