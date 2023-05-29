@@ -17,10 +17,9 @@
     {% if active_quizzes %}
         {% for quiz in active_quizzes %}
 
-            <div class="quiz-container" data-quiz-id="{{ quiz._id }}">
+            <div class="quiz-container">
                 <h2>{{ quiz.quiz_name }}</h2>
                 <p><strong>Author:</strong> {{ quiz.author }}</p>
-                <p id="quiz-status-{{ quiz._id }}"><strong>Status:</strong> {{ quiz.status }}</p>
                 <p><strong>Start Time:</strong> {{ quiz.start_date }}</p>
                 <p><strong>End Time:</strong> {{ quiz.end_date }}</p>
                 <form action="/start_quiz/{{ quiz._id }}" method="GET">
@@ -38,10 +37,10 @@
     {% set inactive_quizzes = inactiveQuizzes|selectattr('status', 'equalto', 'inactive')|list %}
     {% if inactive_quizzes %}
         {% for quiz in inactive_quizzes %}
-            <div class="quiz-container" data-quiz-id="{{ quiz._id }}">
+            <div class="quiz-container">
                 <h2>{{ quiz.quiz_name }}</h2>
                 <p><strong>Author:</strong> {{ quiz.author }}</p>
-                <p id="quiz-status-{{ quiz._id }}"><strong>Status:</strong> {{ quiz.status }}</p>
+                <p><strong>Status:</strong> {{ quiz.status }}</p>
                 <p><strong>Start Time:</strong> {{ quiz.start_date }}</p>
                 <p><strong>End Time:</strong> {{ quiz.end_date }}</p>
             </div>
@@ -56,10 +55,10 @@
     {% set finished_quizzes = finishedQuizzes|selectattr('status', 'equalto', 'finished')|list %}
     {% if finished_quizzes %}
         {% for quiz in finished_quizzes %}
-            <div class="quiz-container" data-quiz-id="{{ quiz._id }}">
+            <div class="quiz-container">
                 <h2>{{ quiz.quiz_name }}</h2>
                 <p><strong>Author:</strong> {{ quiz.author }}</p>
-                <p id="quiz-status-{{ quiz._id }}"><strong>Status:</strong> {{ quiz.status }}</p>
+                <p><strong>Status:</strong> {{ quiz.status }}</p>
                 <p><strong>Start Time:</strong> {{ quiz.start_date }}</p>
                 <p><strong>End Time:</strong> {{ quiz.end_date }}</p>
             </div>
@@ -69,34 +68,5 @@
         <p class="no-quizzes">No Finished Quizzes</p>
     {% endif %}
     <hr>
-
-
-    <script>
-        function updateQuizStatus(quizId) {
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', '/quiz_status/' + quizId, true);
-            xhr.onreadystatechange = function () {
-              if (xhr.readyState === XMLHttpRequest.DONE) {
-                if (xhr.status === 200) {
-                  var response = JSON.parse(xhr.responseText);
-                  var quizStatusElement = document.getElementById('quiz-status-' + quizId);
-                  quizStatusElement.textContent = response.status;
-                } else {
-                  console.error('Failed to retrieve quiz status');
-                }
-              }
-            };
-            xhr.send();
-          }
-        
-          // Update quiz statuses periodically (every 5 seconds)
-          setInterval(function () {
-            var quizElements = document.getElementsByClassName('quiz-container');
-            for (var i = 0; i < quizElements.length; i++) {
-              var quizId = quizElements[i].getAttribute('data-quiz-id');
-              updateQuizStatus(quizId);
-            }
-          }, 5000);
-    </script>
 </body>
 </html>
