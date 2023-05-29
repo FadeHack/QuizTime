@@ -8,8 +8,9 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style/result.css') }}">
 </head>
 <body>
-    <h1>All Results</h1>
     {% include 'nav.html' %}
+    <div class="v-rule"></div>
+    <h1>All Results</h1>
     {% if results is defined and results %}
         {% for result in results %}
             <div class="result-container">
