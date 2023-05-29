@@ -4,7 +4,9 @@ from flask_limiter import Limiter
 from pymongo import MongoClient
 from datetime import datetime
 from pymongo.server_api import ServerApi
-from datetime import datetime, timedelta
+from datetime import datetime
+import pytz
+
 
 
 app = Flask(__name__)
@@ -30,9 +32,13 @@ limiter = Limiter(app, default_limits=["10 per minute"])
 
 
 
-def adjust_to_ist(datetime_obj):
-    ist_offset = timedelta(hours=5, minutes=30) 
-    return datetime_obj + ist_offset
+def adjust_to_washington(datetime_obj):
+    ist_timezone = pytz.timezone('Asia/Kolkata')  # IST timezone
+    washington_timezone = pytz.timezone('America/New_York')  # Washington, D.C., USA timezone
+    ist_datetime = ist_timezone.localize(datetime_obj)
+    washington_datetime = ist_datetime.astimezone(washington_timezone)
+    return washington_datetime
+
 
 # Helper function to check if a quiz is active
 def is_quiz_active(quiz):
@@ -95,8 +101,8 @@ def create_quiz():
             correct_option = int(request.form['question{}_correct_option'.format(i)])
             questions.append({'question': question, 'options': options, 'correct_option': correct_option})
 
-        start_datetime = adjust_to_ist(datetime.strptime(start_date + ' ' + start_time, '%Y-%m-%d %H:%M'))
-        end_datetime = adjust_to_ist(datetime.strptime(end_date + ' ' + end_time, '%Y-%m-%d %H:%M'))
+        start_datetime = adjust_to_washington(datetime.strptime(start_date + ' ' + start_time, '%Y-%m-%d %H:%M'))
+        end_datetime = adjust_to_washington(datetime.strptime(end_date + ' ' + end_time, '%Y-%m-%d %H:%M'))
 
         # Insert the new quiz into the database
         stat = update_status_return()
