@@ -16,7 +16,6 @@
     {% set active_quizzes = activeQuizzes|selectattr('status', 'equalto', 'active')|list %}
     {% if active_quizzes %}
         {% for quiz in active_quizzes %}
-            {% import datetime, pytz %}
             <div class="quiz-container">
                 <h2>{{ quiz.quiz_name }}</h2>
                 <p><strong>Author:</strong> {{ quiz.author }}</p>
