@@ -30,6 +30,13 @@ results_collection = db['results']
 # Rate limiting configuration
 limiter = Limiter(app, default_limits=["10 per minute"])
 
+def convert_to_ist(datetime_obj):
+    ist_timezone = pytz.timezone('Asia/Kolkata')  # IST timezone
+    washington_timezone = pytz.timezone('America/New_York')  # Washington, D.C., USA timezone
+    washington_datetime = washington_timezone.localize(datetime_obj)
+    ist_datetime = washington_datetime.astimezone(ist_timezone)
+    return ist_datetime
+
 
 
 def adjust_to_washington(datetime_obj):
