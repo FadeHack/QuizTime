@@ -4,10 +4,6 @@
         {
           "path": "/quizzes/all",
           "schedule": "* * * * *"
-        },
-        {
-            "path": "/results/all",
-            "schedule":"* * * * *"
         }
       ],
     "builds": [
