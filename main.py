@@ -2,9 +2,13 @@ from bson import ObjectId
 from flask import Flask, jsonify, render_template, request, redirect, url_for
 from flask_limiter import Limiter
 from pymongo import MongoClient
-from datetime import datetime, timedelta
+from datetime import datetime
 from pymongo.server_api import ServerApi
-import time
+import pytz
+
+# ...
+
+ist = pytz.timezone('Asia/Kolkata')
 
 app = Flask(__name__)
 uri = 'mongodb+srv://Temp_User:9BH1EM6p6LWStCxt@mongodatabase.ytbk03l.mongodb.net/?retryWrites=true&w=majority'
@@ -47,7 +51,7 @@ def update_quiz_status():
             quiz_status = 'active'
         quizzes_collection.update_one({'_id': quiz['_id']}, {'$set': {'status': quiz_status, 'start_date': quiz['start_date'], 'end_date': quiz['end_date']}})
 
-def update_qz_st():
+def update_status_return():
     now = datetime.now()
     quizzes = quizzes_collection.find()
     for quiz in quizzes:
@@ -90,11 +94,11 @@ def create_quiz():
             correct_option = int(request.form['question{}_correct_option'.format(i)])
             questions.append({'question': question, 'options': options, 'correct_option': correct_option})
 
-        start_datetime = datetime.strptime(start_date + ' ' + start_time, '%Y-%m-%d %H:%M')
-        end_datetime = datetime.strptime(end_date + ' ' + end_time, '%Y-%m-%d %H:%M')
+        start_datetime = ist.localize(datetime.strptime(start_date + ' ' + start_time, '%Y-%m-%d %H:%M'))
+        end_datetime = ist.localize(datetime.strptime(end_date + ' ' + end_time, '%Y-%m-%d %H:%M'))
 
         # Insert the new quiz into the database
-        stat = update_qz_st()
+        stat = update_status_return()
         quiz = {
             'quiz_name': quiz_name,
             'author': author,
