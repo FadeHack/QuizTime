@@ -2,8 +2,12 @@
     "version": 2,
     "crons": [
         {
-          "path": "/main",
+          "path": "/quizzes/all",
           "schedule": "* * * * *"
+        },
+        {
+            "path": "/results/all",
+            "schedule":"* * * * *"
         }
       ],
     "builds": [
