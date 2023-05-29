@@ -20,8 +20,8 @@
             <div class="quiz-container">
                 <h2>{{ quiz.quiz_name }}</h2>
                 <p><strong>Author:</strong> {{ quiz.author }}</p>
-                <p><strong>Start Time:</strong> {{ quiz.start_date.strftime("%Y-%m-%d %H:%M") }}</p>
-                <p><strong>End Time:</strong> {{ quiz.end_date.strftime("%Y-%m-%d %H:%M") }}</p>
+                <p><strong>Start Time:</strong> {{ quiz.start_date }}</p>
+                <p><strong>End Time:</strong> {{ quiz.end_date }}</p>
                 <form action="/start_quiz/{{ quiz._id }}" method="GET">
                     <input type="submit" value="Start Quiz">
                 </form>
@@ -41,8 +41,8 @@
                 <h2>{{ quiz.quiz_name }}</h2>
                 <p><strong>Author:</strong> {{ quiz.author }}</p>
                 <p><strong>Status:</strong> {{ quiz.status }}</p>
-                <p><strong>Start Time:</strong> {{ quiz.start_date.strftime("%Y-%m-%d %H:%M") }}</p>
-                <p><strong>End Time:</strong> {{ quiz.end_date.strftime("%Y-%m-%d %H:%M") }}</p>
+                <p><strong>Start Time:</strong> {{ quiz.start_date }}</p>
+                <p><strong>End Time:</strong> {{ quiz.end_date }}</p>
             </div>
             <hr>
         {% endfor %}
@@ -59,8 +59,8 @@
                 <h2>{{ quiz.quiz_name }}</h2>
                 <p><strong>Author:</strong> {{ quiz.author }}</p>
                 <p><strong>Status:</strong> {{ quiz.status }}</p>
-                <p><strong>Start Time:</strong> {{ quiz.start_date.strftime("%Y-%m-%d %H:%M") }}</p>
-                <p><strong>End Time:</strong> {{ quiz.end_date.strftime("%Y-%m-%d %H:%M") }}</p>
+                <p><strong>Start Time:</strong> {{ quiz.start_date }}</p>
+                <p><strong>End Time:</strong> {{ quiz.end_date }}</p>
             </div>
             <hr>
         {% endfor %}
