@@ -15,7 +15,7 @@
 
     "crons": [
         {
-          "path": "/main.py",
+          "path": "/api/main.py",
           "schedule": "* * * * *"
         }
       ]
