@@ -28,7 +28,7 @@ nav ul li {
 
 nav ul li a {
     text-decoration: none;
-    font-family: cursive;
+    font-family: monospace;
     color: #fff;
     font-size: 18px;
     transition: color 0.3s ease;
