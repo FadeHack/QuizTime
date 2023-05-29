@@ -11,5 +11,12 @@
             "src": "(.*)",
             "dest": "main.py"
         }
-    ]
+    ],
+
+    "crons": [
+        {
+          "path": "/main.py",
+          "schedule": "* * * * *"
+        }
+      ]
   }
