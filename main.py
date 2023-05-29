@@ -178,8 +178,8 @@ def get_all_quizzes():
     finished_quizzes = []
 
     for quiz in quizzes:
-        quiz['start_date'] = convert_to_ist(quiz['start_date'])
-        quiz['end_date'] = convert_to_ist(quiz['end_date'])
+        sd = convert_to_ist(quiz['start_date'])
+        ed = convert_to_ist(quiz['end_date'])
 
         if quiz['status'] == 'active':
             active_quizzes.append(quiz)
@@ -188,7 +188,7 @@ def get_all_quizzes():
         elif quiz['status'].lower() == 'finished':
             finished_quizzes.append(quiz)
 
-    return render_template('quizzes.html', activeQuizzes=active_quizzes, inactiveQuizzes=inactive_quizzes, finishedQuizzes=finished_quizzes)
+    return render_template('quizzes.html',sd=sd, ed=ed, activeQuizzes=active_quizzes, inactiveQuizzes=inactive_quizzes, finishedQuizzes=finished_quizzes)
 
 # Endpoint to get all quiz results
 @app.route('/results/all', methods=['GET'])
