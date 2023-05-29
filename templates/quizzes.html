@@ -16,11 +16,12 @@
     {% set active_quizzes = activeQuizzes|selectattr('status', 'equalto', 'active')|list %}
     {% if active_quizzes %}
         {% for quiz in active_quizzes %}
+
             <div class="quiz-container">
                 <h2>{{ quiz.quiz_name }}</h2>
                 <p><strong>Author:</strong> {{ quiz.author }}</p>
-                <p><strong>Start Time:</strong> {{ sd.strftime("%Y-%m-%d %H:%M") }}</p>
-                <p><strong>End Time:</strong> {{ ed.strftime("%Y-%m-%d %H:%M") }}</p>
+                <p><strong>Start Time:</strong> {{ quiz.start_date.strftime("%Y-%m-%d %H:%M") }}</p>
+                <p><strong>End Time:</strong> {{ quiz.end_date.strftime("%Y-%m-%d %H:%M") }}</p>
                 <form action="/start_quiz/{{ quiz._id }}" method="GET">
                     <input type="submit" value="Start Quiz">
                 </form>
