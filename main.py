@@ -4,8 +4,9 @@ from flask_limiter import Limiter
 from pymongo import MongoClient
 from datetime import datetime
 from pymongo.server_api import ServerApi
-from apscheduler.schedulers.background import BackgroundScheduler
+from datetime import datetime
 import pytz
+
 
 
 app = Flask(__name__)
@@ -29,13 +30,13 @@ results_collection = db['results']
 # Rate limiting configuration
 limiter = Limiter(app, default_limits=["10 per minute"])
 
-
 def convert_to_ist(datetime_obj):
     ist_timezone = pytz.timezone('Asia/Kolkata')  # IST timezone
     washington_timezone = pytz.timezone('America/New_York')  # Washington, D.C., USA timezone
     washington_datetime = washington_timezone.localize(datetime_obj)
     ist_datetime = washington_datetime.astimezone(ist_timezone)
     return ist_datetime
+
 
 
 def adjust_to_washington(datetime_obj):
@@ -51,7 +52,6 @@ def is_quiz_active(quiz):
     now = datetime.now()
     return quiz['start_date'] <= now <= quiz['end_date']
 
-
 # Helper function to update quiz status based on current time
 def update_quiz_status():
     now = datetime.now()
@@ -63,8 +63,7 @@ def update_quiz_status():
             quiz_status = 'finished'
         elif now < quiz['end_date'] and now > quiz['start_date']:
             quiz_status = 'active'
-        quizzes_collection.update_one({'_id': quiz['_id']}, {'$set': {'status': quiz_status}})
-
+        quizzes_collection.update_one({'_id': quiz['_id']}, {'$set': {'status': quiz_status, 'start_date': quiz['start_date'], 'end_date': quiz['end_date']}})
 
 def update_status_return():
     now = datetime.now()
@@ -78,13 +77,11 @@ def update_status_return():
             quiz_status = 'active'
         return quiz_status
 
-
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET','POST'])
 def home_page():
     if request.method == 'POST':
         return redirect(url_for('create_quiz'))
     return render_template('index.html')
-
 
 # Endpoint to create a new quiz
 @app.route('/create_quiz', methods=['GET', 'POST'])
@@ -126,6 +123,9 @@ def create_quiz():
         }
         quizzes_collection.insert_one(quiz)
 
+        # Update the quiz status
+        update_quiz_status()
+
         # Redirect to the quizzes page
         return redirect(url_for('get_all_quizzes'))
     else:
@@ -156,6 +156,7 @@ def submit_quiz(quiz_id):
         if response is not None and int(response) == int(quiz['questions'][i]['correct_option']):
             score += 1
 
+
     result = {
         'quiz_id': quiz_id,
         'score': score,
@@ -165,7 +166,6 @@ def submit_quiz(quiz_id):
     results_collection.insert_one(result)
 
     return redirect(url_for('get_all_results'))
-
 
 @app.route('/quizzes/all', methods=['GET'])
 def get_all_quizzes():
@@ -190,9 +190,7 @@ def get_all_quizzes():
         elif quiz_copy['status'].lower() == 'finished':
             finished_quizzes.append(quiz_copy)
 
-    return render_template('quizzes.html', activeQuizzes=active_quizzes, inactiveQuizzes=inactive_quizzes,
-                           finishedQuizzes=finished_quizzes)
-
+    return render_template('quizzes.html', activeQuizzes=active_quizzes, inactiveQuizzes=inactive_quizzes, finishedQuizzes=finished_quizzes)
 
 # Endpoint to get all quiz results
 @app.route('/results/all', methods=['GET'])
@@ -202,7 +200,4 @@ def get_all_results():
 
 
 if __name__ == '__main__':
-    scheduler = BackgroundScheduler()
-    scheduler.add_job(update_quiz_status, 'interval', minutes=1)
-    scheduler.start()
     app.run()
