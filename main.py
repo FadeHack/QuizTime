@@ -35,6 +35,7 @@ def is_quiz_active(quiz):
     return quiz['start_date'] <= now <= quiz['end_date']
 
 # Helper function to update quiz status based on current time
+@app.before_request
 def update_quiz_status():
     now = datetime.now()
     quizzes = quizzes_collection.find()
