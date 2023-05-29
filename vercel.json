@@ -1,5 +1,11 @@
 {
     "version": 2,
+    "crons": [
+        {
+          "path": "/api/main",
+          "schedule": "* * * * *"
+        }
+      ],
     "builds": [
         {
             "src": "*.py",
@@ -11,12 +17,6 @@
             "src": "(.*)",
             "dest": "main.py"
         }
-    ],
+    ]
 
-    "crons": [
-        {
-          "path": "/api/main",
-          "schedule": "* * * * *"
-        }
-      ]
   }
