@@ -4,9 +4,8 @@ from flask_limiter import Limiter
 from pymongo import MongoClient
 from datetime import datetime
 from pymongo.server_api import ServerApi
-from datetime import datetime
+from apscheduler.schedulers.background import BackgroundScheduler
 import pytz
-
 
 
 app = Flask(__name__)
@@ -30,10 +29,10 @@ results_collection = db['results']
 # Rate limiting configuration
 limiter = Limiter(app, default_limits=["10 per minute"])
 
+
 def convert_to_ist(datetime_obj):
     ist_timezone = pytz.timezone('Asia/Kolkata')  # IST timezone
     return datetime_obj.astimezone(ist_timezone)
-
 
 
 def adjust_to_washington(datetime_obj):
@@ -49,6 +48,7 @@ def is_quiz_active(quiz):
     now = datetime.now()
     return quiz['start_date'] <= now <= quiz['end_date']
 
+
 # Helper function to update quiz status based on current time
 def update_quiz_status():
     now = datetime.now()
@@ -60,7 +60,8 @@ def update_quiz_status():
             quiz_status = 'finished'
         elif now < quiz['end_date'] and now > quiz['start_date']:
             quiz_status = 'active'
-        quizzes_collection.update_one({'_id': quiz['_id']}, {'$set': {'status': quiz_status, 'start_date': quiz['start_date'], 'end_date': quiz['end_date']}})
+        quizzes_collection.update_one({'_id': quiz['_id']}, {'$set': {'status': quiz_status}})
+
 
 def update_status_return():
     now = datetime.now()
@@ -74,11 +75,13 @@ def update_status_return():
             quiz_status = 'active'
         return quiz_status
 
-@app.route('/', methods=['GET','POST'])
+
+@app.route('/', methods=['GET', 'POST'])
 def home_page():
     if request.method == 'POST':
         return redirect(url_for('create_quiz'))
     return render_template('index.html')
+
 
 # Endpoint to create a new quiz
 @app.route('/create_quiz', methods=['GET', 'POST'])
@@ -197,4 +200,7 @@ def get_all_results():
 
 
 if __name__ == '__main__':
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(update_quiz_status, 'interval', minutes=1)
+    scheduler.start()
     app.run()
