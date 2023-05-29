@@ -167,7 +167,6 @@ def submit_quiz(quiz_id):
 
     return redirect(url_for('get_all_results'))
 
-
 @app.route('/quizzes/all', methods=['GET'])
 def get_all_quizzes():
     update_quiz_status()
@@ -178,13 +177,18 @@ def get_all_quizzes():
     finished_quizzes = []
 
     for quiz in quizzes:
+        quiz_copy = quiz.copy()  # Create a copy of the quiz to avoid modifying the original database object
+        start_datetime_ist = convert_to_ist(quiz['start_date'])
+        end_datetime_ist = convert_to_ist(quiz['end_date'])
+        quiz_copy['start_date'] = start_datetime_ist.strftime("%Y-%m-%d %H:%M")
+        quiz_copy['end_date'] = end_datetime_ist.strftime("%Y-%m-%d %H:%M")
 
-        if quiz['status'] == 'active':
-            active_quizzes.append(quiz)
-        elif quiz['status'] == 'inactive':
-            inactive_quizzes.append(quiz)
-        elif quiz['status'].lower() == 'finished':
-            finished_quizzes.append(quiz)
+        if quiz_copy['status'] == 'active':
+            active_quizzes.append(quiz_copy)
+        elif quiz_copy['status'] == 'inactive':
+            inactive_quizzes.append(quiz_copy)
+        elif quiz_copy['status'].lower() == 'finished':
+            finished_quizzes.append(quiz_copy)
 
     return render_template('quizzes.html', activeQuizzes=active_quizzes, inactiveQuizzes=inactive_quizzes, finishedQuizzes=finished_quizzes)
 
