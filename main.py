@@ -4,11 +4,7 @@ from flask_limiter import Limiter
 from pymongo import MongoClient
 from datetime import datetime
 from pymongo.server_api import ServerApi
-import pytz
 
-# ...
-
-ist = pytz.timezone('Asia/Kolkata')
 
 app = Flask(__name__)
 uri = 'mongodb+srv://Temp_User:9BH1EM6p6LWStCxt@mongodatabase.ytbk03l.mongodb.net/?retryWrites=true&w=majority'
@@ -94,8 +90,8 @@ def create_quiz():
             correct_option = int(request.form['question{}_correct_option'.format(i)])
             questions.append({'question': question, 'options': options, 'correct_option': correct_option})
 
-        start_datetime = ist.localize(datetime.strptime(start_date + ' ' + start_time, '%Y-%m-%d %H:%M'))
-        end_datetime = ist.localize(datetime.strptime(end_date + ' ' + end_time, '%Y-%m-%d %H:%M'))
+        start_datetime = datetime.strptime(start_date + ' ' + start_time, '%Y-%m-%d %H:%M')
+        end_datetime = datetime.strptime(end_date + ' ' + end_time, '%Y-%m-%d %H:%M')
 
         # Insert the new quiz into the database
         stat = update_status_return()
