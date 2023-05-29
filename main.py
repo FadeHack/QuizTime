@@ -35,7 +35,6 @@ def is_quiz_active(quiz):
     return quiz['start_date'] <= now <= quiz['end_date']
 
 # Helper function to update quiz status based on current time
-@app.before_request
 def update_quiz_status():
     now = datetime.now()
     quizzes = quizzes_collection.find()
@@ -72,6 +71,7 @@ def home_page():
 def create_quiz():
     num_questions = 0
     if request.method == 'POST':
+        # Retrieve form data and create the quiz
         num_questions = int(request.form['num_questions'])
         quiz_name = request.form['quizName']
         author = request.form['author']
@@ -92,9 +92,9 @@ def create_quiz():
 
         start_datetime = datetime.strptime(start_date + ' ' + start_time, '%Y-%m-%d %H:%M')
         end_datetime = datetime.strptime(end_date + ' ' + end_time, '%Y-%m-%d %H:%M')
-        
+
+        # Insert the new quiz into the database
         stat = update_qz_st()
-        
         quiz = {
             'quiz_name': quiz_name,
             'author': author,
@@ -104,10 +104,15 @@ def create_quiz():
             'status': stat
         }
         quizzes_collection.insert_one(quiz)
-        
+
+        # Update the quiz status
+        update_quiz_status()
+
+        # Redirect to the quizzes page
         return redirect(url_for('get_all_quizzes'))
     else:
         return render_template('create_quiz.html', num_questions=num_questions)
+
 
 @app.route('/start_quiz/<quiz_id>', methods=['GET'])
 @limiter.exempt  # Exempt rate limiting for starting a quiz
