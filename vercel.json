@@ -2,14 +2,10 @@
     "version": 2,
     "crons": [
         {
-          "path": "/quizzes/all",
-          "schedule": "* * * * *"
-        },
-        {
-            "path": "/results/all",
-            "schedule":"* * * * *"
+            "path": "/quizzes/all",
+            "schedule": "0 * * * *"
         }
-      ],
+    ],
     "builds": [
         {
             "src": "*.py",
@@ -22,4 +18,4 @@
             "dest": "main.py"
         }
     ]
-  }
+}

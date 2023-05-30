@@ -27,7 +27,7 @@ quizzes_collection = db['quizzes']
 results_collection = db['results']
 
 # Rate limiting configuration
-limiter = Limiter(app, default_limits=["10 per minute"])
+limiter = Limiter(app, default_limits=["100 per minute"])
 
 
 def convert_to_ist(datetime_obj):
@@ -85,7 +85,7 @@ def home_page():
 
 # Endpoint to create a new quiz
 @app.route('/create_quiz', methods=['GET', 'POST'])
-@limiter.limit("2 per minute")  # Rate limit: 2 requests per minute
+@limiter.limit("20 per minute")  # Rate limit: 2 requests per minute
 def create_quiz():
     num_questions = 0
     if request.method == 'POST':
@@ -141,7 +141,7 @@ def start_quiz(quiz_id):
 
 
 @app.route('/submit_quiz/<quiz_id>', methods=['POST'])
-@limiter.limit("5 per minute")  # Rate limit: 5 requests per minute
+@limiter.limit("50 per minute")  # Rate limit: 5 requests per minute
 def submit_quiz(quiz_id):
     quiz = quizzes_collection.find_one({'_id': ObjectId(quiz_id)})
     questions = [{'i': i, **question} for i, question in enumerate(quiz['questions'])]
